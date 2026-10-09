@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TaskFlow – Modern Student Task Planning, Assignment Tracking, and Productivity Dashboard">
+  <title>TaskFlow – Student Task Planning & Productivity System</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Background Mesh Glow Orbs -->
+  <div class="ambient-glow ambient-glow-top" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-bottom" aria-hidden="true"></div>
+
+  <!-- Confetti Canvas for Celebrations -->
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">TaskFlow</span>
+            <span class="brand-badge"><i class="fa-solid fa-sparkles"></i> PEARL & CABERNET</span>
+          </div>
+        </div>
+        <button class="icon-btn sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Quick Add Task Button -->
+      <div class="sidebar-action">
+        <button class="btn btn-primary btn-block" id="sidebarQuickAddBtn">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create New Task</span>
+        </button>
+      </div>
+
+      <!-- Main Navigation Menu -->
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#dashboard" class="nav-link active" data-view="dashboard" id="navDashboard">
+              <i class="fa-solid fa-chart-pie nav-icon"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#tasks" class="nav-link" data-view="tasks" id="navTasks">
+              <i class="fa-solid fa-list-check nav-icon"></i>
+              <span class="nav-text">My Tasks</span>
+              <span class="badge badge-neutral" id="badgeAllCount">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#today" class="nav-link" data-view="today" id="navToday">
+              <i class="fa-solid fa-calendar-day nav-icon"></i>
+              <span class="nav-text">Today</span>
+              <span class="badge badge-primary" id="badgeTodayCount">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#upcoming" class="nav-link" data-view="upcoming" id="navUpcoming">
+              <i class="fa-solid fa-calendar-week nav-icon"></i>
+              <span class="nav-text">Upcoming</span>
+              <span class="badge badge-info" id="badgeUpcomingCount">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#overdue" class="nav-link" data-view="overdue" id="navOverdue">
+              <i class="fa-solid fa-triangle-exclamation nav-icon"></i>
+              <span class="nav-text">Overdue</span>
+              <span class="badge badge-danger" id="badgeOverdueCount">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#completed" class="nav-link" data-view="completed" id="navCompleted">
+              <i class="fa-solid fa-circle-check nav-icon"></i>
+              <span class="nav-text">Completed</span>
+              <span class="badge badge-success" id="badgeCompletedCount">0</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-section-title">WORKSPACE</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#categories" class="nav-link" data-view="categories" id="navCategories">
+              <i class="fa-solid fa-folder-tree nav-icon"></i>
+              <span class="nav-text">Categories</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#timer" class="nav-link" data-view="timer" id="navTimer">
+              <i class="fa-solid fa-stopwatch nav-icon"></i>
+              <span class="nav-text">Study Timer (Pomodoro)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#settings" class="nav-link" data-view="settings" id="navSettings">
+              <i class="fa-solid fa-gear nav-icon"></i>
+              <span class="nav-text">Settings & Data</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Mini Study Streak Widget -->
+      <div class="sidebar-footer">
+        <div class="streak-card">
+          <div class="streak-icon">
+            <i class="fa-solid fa-fire"></i>
+          </div>
+          <div class="streak-info">
+            <div class="streak-title">Daily Focus Streak</div>
+            <div class="streak-val" id="streakDays">5 Days Active!</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Overlay for mobile drawer -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Top Navbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-title-group">
+            <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            <p class="page-subtitle" id="currentDateDisplay">Thursday, October 8, 2026</p>
+          </div>
+        </div>
+
+        <!-- Global Search Bar in Topbar -->
+        <div class="topbar-search">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="globalSearchInput" placeholder="Search assignments, exams, projects..." autocomplete="off">
+          <span class="search-kbd-shortcut" title="Press / to search"><kbd>/</kbd></span>
+          <button class="clear-search-btn" id="clearGlobalSearch" style="display: none;">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Palette Signature Indicator -->
+          <div class="palette-signature-pill" title="Palette: Mother of Pearl (Pantone 12-1006) • Cabernet (Pantone 19-1724) • Poignant Pink (Pantone 14-1715)">
+            <span class="palette-swatches">
+              <span class="palette-swatch swatch-pearl"></span>
+              <span class="palette-swatch swatch-cabernet"></span>
+              <span class="palette-swatch swatch-pink"></span>
+            </span>
+            <span class="palette-signature-label">Pearl & Cabernet</span>
+          </div>
+
+          <!-- Study Mode Sound toggle -->
+          <button class="icon-btn tooltip-btn" id="soundToggleBtn" title="Toggle UI sound effects" aria-label="Toggle Sound">
+            <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+          </button>
+
+          <!-- Theme Toggle Button -->
+          <button class="icon-btn theme-toggle-btn" id="themeToggleBtn" title="Switch Theme (Pearl Light / Cabernet Dark)" aria-label="Toggle Dark/Light Mode">
+            <i class="fa-solid fa-moon" id="themeIcon"></i>
+          </button>
+
+          <!-- New Task Topbar Button -->
+          <button class="btn btn-primary topbar-new-btn" id="topbarNewTaskBtn">
+            <i class="fa-solid fa-plus"></i>
+            <span class="btn-text">New Task</span>
+          </button>
+
+          <!-- Student Profile Avatar -->
+          <div class="user-pill" id="userProfilePill" title="Student Profile">
+            <div class="user-avatar" id="avatarDisplay">ST</div>
+            <div class="user-meta">
+              <span class="user-name" id="userNameDisplay">Alex Morgan</span>
+              <span class="user-role" id="userMajorDisplay">CS Major • 3rd Year</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sub-header Alert Banner (for urgent overdue tasks) -->
+      <div class="alert-banner" id="overdueAlertBanner" style="display: none;">
+        <div class="alert-banner-content">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span id="overdueAlertText">You have overdue assignments requiring immediate attention!</span>
+        </div>
+        <button class="btn btn-sm btn-outline-danger" id="viewOverdueBtn">Review Overdue</button>
+      </div>
+
+      <!-- Main Body Container with Dynamic Views -->
+      <main class="content-container" id="contentContainer">
+
+        <!-- ==============================================
+             1. DASHBOARD VIEW
+             ============================================== -->
+        <section class="view-panel active" id="viewDashboard">
+          <!-- Welcome Hero Banner -->
+          <div class="dashboard-hero">
+            <div class="hero-content">
+              <div class="hero-greeting">
+                <span class="greeting-badge">🎓 Fall Semester 2026</span>
+                <h2 class="hero-title" id="greetingHeading">Ready to crush your goals today?</h2>
+                <p class="hero-quote" id="motivationalQuote">"The secret of getting ahead is getting started."</p>
+              </div>
+              <div class="hero-stats-chips">
+                <div class="stat-chip">
+                  <span class="chip-label">Daily Target</span>
+                  <span class="chip-val" id="heroTodayProgress">0/0 done</span>
+                </div>
+                <div class="stat-chip">
+                  <span class="chip-label">Semester Pace</span>
+                  <span class="chip-val text-success" id="heroPaceLabel">On Track</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Stats Grid -->
+          <div class="stats-grid">
+            <!-- Total Tasks -->
+            <div class="stat-card stat-total" data-filter="all">
+              <div class="stat-icon-wrapper">
+                <i class="fa-solid fa-list-check"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Total Tasks</span>
+                <span class="stat-number" id="statTotalCount">0</span>
+                <span class="stat-hint">Active academic workload</span>
+              </div>
+            </div>
+
+            <!-- Completed Tasks -->
+            <div class="stat-card stat-completed" data-filter="completed">
+              <div class="stat-icon-wrapper">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Completed Tasks</span>
+                <span class="stat-number" id="statCompletedCount">0</span>
+                <span class="stat-hint text-success" id="statCompletedSubtext">Well done!</span>
+              </div>
+            </div>
+
+            <!-- Pending Tasks -->
+            <div class="stat-card stat-pending" data-filter="pending">
+              <div class="stat-icon-wrapper">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Pending Tasks</span>
+                <span class="stat-number" id="statPendingCount">0</span>
+                <span class="stat-hint">Requires your focus</span>
+              </div>
+            </div>
+
+            <!-- Overdue Tasks -->
+            <div class="stat-card stat-overdue" data-filter="overdue">
+              <div class="stat-icon-wrapper">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Overdue Tasks</span>
+                <span class="stat-number" id="statOverdueCount">0</span>
+                <span class="stat-hint text-danger" id="statOverdueSubtext">Needs urgent action</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Charts & Analytics Section -->
+          <div class="dashboard-analytics-row">
+            <!-- Overall Completion Progress Ring Card -->
+            <div class="card analytics-card completion-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Completion Rate</h3>
+                  <p class="card-subtitle">Overall progress across all courses</p>
+                </div>
+                <span class="badge badge-accent" id="completionRateBadge">0% Complete</span>
+              </div>
+              <div class="progress-ring-container">
+                <div class="svg-ring-wrapper">
+                  <svg class="progress-ring" width="160" height="160" viewBox="0 0 160 160">
+                    <defs>
+                      <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#64242E" />
+                        <stop offset="50%" stop-color="#D9536C" />
+                        <stop offset="100%" stop-color="#E8A3AC" />
+                      </linearGradient>
+                    </defs>
+                    <circle class="ring-bg" cx="80" cy="80" r="66" stroke-width="12" fill="transparent" />
+                    <circle class="ring-indicator" id="overallRingIndicator" cx="80" cy="80" r="66" stroke-width="12" fill="transparent" stroke="url(#ringGradient)" stroke-dasharray="414.69" stroke-dashoffset="414.69" />
+                  </svg>
+                  <div class="ring-content">
+                    <span class="ring-percentage" id="overallPercentageText">0%</span>
+                    <span class="ring-sub">Finished</span>
+                  </div>
+                </div>
+                <div class="progress-summary-legend">
+                  <div class="legend-row">
+                    <span class="legend-dot dot-completed"></span>
+                    <span class="legend-label">Completed:</span>
+                    <strong class="legend-val" id="legendCompleted">0</strong>
+                  </div>
+                  <div class="legend-row">
+                    <span class="legend-dot dot-pending"></span>
+                    <span class="legend-label">Pending:</span>
+                    <strong class="legend-val" id="legendPending">0</strong>
+                  </div>
+                  <div class="legend-row">
+                    <span class="legend-dot dot-overdue"></span>
+                    <span class="legend-label">Overdue:</span>
+                    <strong class="legend-val" id="legendOverdue">0</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weekly Productivity & Study Velocity Chart -->
+            <div class="card analytics-card weekly-chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Weekly Productivity</h3>
+                  <p class="card-subtitle">Completed tasks vs scheduled daily targets</p>
+                </div>
+                <div class="chart-controls">
+                  <span class="badge badge-outline" id="currentWeekRange">This Week</span>
+                </div>
+              </div>
+              <div class="weekly-bar-chart" id="weeklyBarChart">
+                <!-- Dynamically rendered via JS -->
+              </div>
+              <div class="chart-footer-metrics">
+                <div class="metric-item">
+                  <span class="metric-label">Most Productive Day</span>
+                  <strong class="metric-val" id="peakDayName">—</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Completed This Week</span>
+                  <strong class="metric-val" id="weeklyCompletedTotal">0 tasks</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category Workload Breakdown -->
+            <div class="card analytics-card category-breakdown-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Category Distribution</h3>
+                  <p class="card-subtitle">Task workload by academic area</p>
+                </div>
+              </div>
+              <div class="category-bars-list" id="categoryBarsList">
+                <!-- Dynamically rendered via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual Column: Today's Tasks & Upcoming Deadlines -->
+          <div class="dashboard-lists-row">
+            <!-- Today's Tasks Preview -->
+            <div class="card preview-card">
+              <div class="card-header">
+                <div class="card-title-with-badge">
+                  <h3 class="card-title">Today's Focus</h3>
+                  <span class="badge badge-primary" id="todayPreviewBadge">0 tasks</span>
+                </div>
+                <button class="btn btn-sm btn-ghost" id="viewAllTodayBtn">View All</button>
+              </div>
+              <div class="preview-task-list" id="dashboardTodayList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Upcoming Deadlines Preview -->
+            <div class="card preview-card">
+              <div class="card-header">
+                <div class="card-title-with-badge">
+                  <h3 class="card-title">Upcoming Deadlines</h3>
+                  <span class="badge badge-info" id="upcomingPreviewBadge">0 upcoming</span>
+                </div>
+                <button class="btn btn-sm btn-ghost" id="viewAllUpcomingBtn">View All</button>
+              </div>
+              <div class="preview-task-list" id="dashboardUpcomingList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             2. ALL TASKS VIEW ("My Tasks")
+             ============================================== -->
+        <section class="view-panel" id="viewTasks">
+          <!-- Filter & Control Toolbar -->
+          <div class="card filter-toolbar-card">
+            <div class="filter-toolbar-top">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="taskSearchInput" placeholder="Filter by title, keywords or notes...">
+                <button class="clear-btn" id="clearTaskSearch" style="display: none;">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <div class="toolbar-actions">
+                <button class="btn btn-outline" id="filterResetBtn">
+                  <i class="fa-solid fa-rotate-left"></i>
+                  <span>Reset Filters</span>
+                </button>
+                <button class="btn btn-primary" id="openAddTaskModalBtn">
+                  <i class="fa-solid fa-plus"></i>
+                  <span>Add Task</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filter Controls Row -->
+            <div class="filter-pills-row">
+              <!-- Category Filter -->
+              <div class="filter-group">
+                <label for="categoryFilter"><i class="fa-solid fa-folder"></i> Category:</label>
+                <select id="categoryFilter" class="form-select">
+                  <option value="all">All Categories</option>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Study">Study</option>
+                  <option value="Project">Project</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <!-- Priority Filter -->
+              <div class="filter-group">
+                <label for="priorityFilter"><i class="fa-solid fa-flag"></i> Priority:</label>
+                <select id="priorityFilter" class="form-select">
+                  <option value="all">All Priorities</option>
+                  <option value="High">🔴 High Priority</option>
+                  <option value="Medium">🟡 Medium Priority</option>
+                  <option value="Low">🟢 Low Priority</option>
+                </select>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="filter-group">
+                <label for="statusFilter"><i class="fa-solid fa-filter"></i> Status:</label>
+                <select id="statusFilter" class="form-select">
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                  <option value="overdue">Overdue</option>
+                </select>
+              </div>
+
+              <!-- Sort Option -->
+              <div class="filter-group">
+                <label for="sortOption"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort by:</label>
+                <select id="sortOption" class="form-select">
+                  <option value="deadline-asc">Deadline (Earliest first)</option>
+                  <option value="deadline-desc">Deadline (Latest first)</option>
+                  <option value="priority-desc">Priority (High to Low)</option>
+                  <option value="priority-asc">Priority (Low to High)</option>
+                  <option value="title-asc">Title (A to Z)</option>
+                  <option value="created-desc">Recently Created</option>
+                </select>
+              </div>
+
+              <!-- View Layout Switch (Grid / List) -->
+              <div class="layout-toggle-group">
+                <button class="layout-btn active" id="layoutGridBtn" title="Grid View" aria-label="Grid View">
+                  <i class="fa-solid fa-grip"></i>
+                </button>
+                <button class="layout-btn" id="layoutListBtn" title="List View" aria-label="List View">
+                  <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Active filter chips display -->
+            <div class="active-filters-chips" id="activeFilterChips"></div>
+          </div>
+
+          <!-- Task Results Count & Quick Actions -->
+          <div class="tasks-header-bar">
+            <div class="results-count">
+              Showing <span id="displayedCount" class="font-bold">0</span> of <span id="totalTasksCount">0</span> tasks
+            </div>
+            <div class="batch-actions-wrapper">
+              <button class="btn btn-sm btn-ghost text-muted" id="markAllCompletedBtn" title="Mark visible pending tasks as completed">
+                <i class="fa-solid fa-check-double"></i> Mark All Shown as Done
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Tasks Container -->
+          <div class="tasks-grid" id="mainTasksContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             3. TODAY VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewToday">
+          <div class="today-focus-header card">
+            <div class="today-header-content">
+              <div class="today-badge-chip">
+                <i class="fa-solid fa-sun text-warning"></i>
+                <span id="todayDateVerbose">Today</span>
+              </div>
+              <h2 class="today-title">Today's Study Plan & Deadlines</h2>
+              <p class="today-sub">Complete today's tasks to maintain your academic momentum and keep stress low.</p>
+            </div>
+            <div class="today-header-actions">
+              <button class="btn btn-primary" id="todayAddTaskBtn">
+                <i class="fa-solid fa-plus"></i> Add Task for Today
+              </button>
+            </div>
+          </div>
+
+          <!-- Tasks due today -->
+          <div class="timeline-section">
+            <div class="section-badge-bar">
+              <span class="badge badge-primary"><i class="fa-solid fa-clock"></i> DUE TODAY</span>
+              <span class="section-counter" id="todayDueCounter">0 tasks</span>
+            </div>
+            <div class="tasks-grid" id="todayTasksList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             4. UPCOMING VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewUpcoming">
+          <div class="card timeline-header-card">
+            <div>
+              <h2 class="card-title">Upcoming Academic Schedule</h2>
+              <p class="card-subtitle">Plan ahead for tomorrow, upcoming weeks, and future course submissions.</p>
+            </div>
+            <button class="btn btn-primary" id="upcomingAddTaskBtn">
+              <i class="fa-solid fa-plus"></i> Add Future Task
+            </button>
+          </div>
+
+          <!-- Tomorrow Section -->
+          <div class="timeline-group">
+            <div class="timeline-group-header">
+              <div class="timeline-pill pill-tomorrow">
+                <i class="fa-solid fa-forward"></i>
+                <span>Tomorrow</span>
+              </div>
+              <span class="timeline-count" id="tomorrowTasksCount">0 tasks</span>
+            </div>
+            <div class="tasks-grid" id="tomorrowTasksList"></div>
+          </div>
+
+          <!-- Later This Week Section -->
+          <div class="timeline-group">
+            <div class="timeline-group-header">
+              <div class="timeline-pill pill-upcoming">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Later This Week & Next 7 Days</span>
+              </div>
+              <span class="timeline-count" id="laterWeekTasksCount">0 tasks</span>
+            </div>
+            <div class="tasks-grid" id="laterWeekTasksList"></div>
+          </div>
+
+          <!-- Future / Later Section -->
+          <div class="timeline-group">
+            <div class="timeline-group-header">
+              <div class="timeline-pill pill-future">
+                <i class="fa-solid fa-calendar-plus"></i>
+                <span>Beyond 7 Days</span>
+              </div>
+              <span class="timeline-count" id="futureTasksCount">0 tasks</span>
+            </div>
+            <div class="tasks-grid" id="futureTasksList"></div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             5. OVERDUE VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewOverdue">
+          <div class="card overdue-header-card">
+            <div class="overdue-header-icon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="overdue-header-text">
+              <h2>Overdue Assignments & Tasks</h2>
+              <p>These tasks passed their deadlines without completion. Prioritize these or reschedule deadlines.</p>
+            </div>
+          </div>
+          <div class="tasks-grid" id="overdueTasksList">
+            <!-- Rendered dynamically -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             6. COMPLETED VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewCompleted">
+          <div class="card completed-header-card">
+            <div class="completed-header-icon">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div class="completed-header-text">
+              <h2>Completed Tasks Archive</h2>
+              <p>Look how much you have achieved! Consistency is the key to college excellence.</p>
+            </div>
+            <button class="btn btn-outline-danger" id="clearCompletedBtn">
+              <i class="fa-solid fa-trash-can"></i>
+              <span>Clear Completed</span>
+            </button>
+          </div>
+          <div class="tasks-grid" id="completedTasksList">
+            <!-- Rendered dynamically -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             7. CATEGORIES VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewCategories">
+          <div class="categories-overview-header card">
+            <div>
+              <h2 class="card-title">Academic & Personal Categories</h2>
+              <p class="card-subtitle">Manage workloads separated by coursework, study revision, term projects, and personal tasks.</p>
+            </div>
+          </div>
+
+          <div class="categories-grid" id="categoriesCardGrid">
+            <!-- Dynamically created with cards for Study, Assignment, Project, Personal, Other -->
+          </div>
+
+          <div class="category-tasks-filtered mt-4">
+            <div class="category-filter-heading-bar">
+              <h3 id="selectedCategoryHeading">All Category Tasks</h3>
+              <div class="category-pills-selector" id="categoryPillsSelector">
+                <!-- Selectors -->
+              </div>
+            </div>
+            <div class="tasks-grid" id="categoryFilteredTasksList"></div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             8. POMODORO STUDY TIMER VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewTimer">
+          <div class="card timer-card">
+            <div class="timer-modes">
+              <button class="timer-mode-btn active" data-time="25" data-mode="pomodoro">Pomodoro (25m)</button>
+              <button class="timer-mode-btn" data-time="5" data-mode="short-break">Short Break (5m)</button>
+              <button class="timer-mode-btn" data-time="15" data-mode="long-break">Long Break (15m)</button>
+            </div>
+
+            <div class="timer-display-ring">
+              <div class="timer-time" id="timerClockDisplay">25:00</div>
+              <div class="timer-state-label" id="timerStateLabel">Focus Session</div>
+            </div>
+
+            <div class="timer-task-selector">
+              <label for="timerTaskSelect"><i class="fa-solid fa-crosshairs"></i> Linking to Task:</label>
+              <select id="timerTaskSelect" class="form-select">
+                <option value="">-- General Study Session --</option>
+              </select>
+            </div>
+
+            <div class="timer-controls">
+              <button class="btn btn-primary btn-lg" id="timerStartBtn">
+                <i class="fa-solid fa-play"></i> Start Focus
+              </button>
+              <button class="btn btn-outline btn-lg" id="timerPauseBtn" style="display: none;">
+                <i class="fa-solid fa-pause"></i> Pause
+              </button>
+              <button class="btn btn-ghost btn-lg" id="timerResetBtn">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+            </div>
+
+            <div class="timer-stats-foot">
+              <div class="foot-stat">
+                <span class="foot-val" id="pomodorosCompletedToday">0</span>
+                <span class="foot-lbl">Sessions Completed Today</span>
+              </div>
+              <div class="foot-stat">
+                <span class="foot-val" id="minutesFocusedToday">0 min</span>
+                <span class="foot-lbl">Total Focus Time</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             9. SETTINGS & DATA MANAGEMENT VIEW
+             ============================================== -->
+        <section class="view-panel" id="viewSettings">
+          <div class="settings-grid">
+            <!-- Student Profile Settings -->
+            <div class="card settings-card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-user-graduate"></i> Student Profile</h3>
+                <p class="card-subtitle">Personalize your student dashboard</p>
+              </div>
+              <form id="profileForm" class="settings-form">
+                <div class="form-group">
+                  <label for="studentNameInput">Your Name</label>
+                  <input type="text" id="studentNameInput" class="form-control" placeholder="Alex Morgan" value="Alex Morgan">
+                </div>
+                <div class="form-group">
+                  <label for="studentMajorInput">Degree / Major</label>
+                  <input type="text" id="studentMajorInput" class="form-control" placeholder="Computer Science • 3rd Year" value="Computer Science • 3rd Year">
+                </div>
+                <div class="form-group">
+                  <label for="studentDailyGoalInput">Daily Completed Tasks Target</label>
+                  <input type="number" id="studentDailyGoalInput" class="form-control" min="1" max="20" value="4">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+              </form>
+            </div>
+
+            <!-- Appearance & Feedback Settings -->
+            <div class="card settings-card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-sliders"></i> Preferences</h3>
+                <p class="card-subtitle">Interface behavior and audio preferences</p>
+              </div>
+              <div class="settings-list">
+                <div class="settings-item">
+                  <div class="settings-item-text">
+                    <strong>Theme Appearance</strong>
+                    <p>Switch between Mother of Pearl Light and Cabernet Velvet Dark themes</p>
+                  </div>
+                  <div class="theme-buttons-group">
+                    <button class="btn btn-sm btn-outline active" id="themeBtnLight"><i class="fa-solid fa-gem"></i> Pearl Light</button>
+                    <button class="btn btn-sm btn-outline" id="themeBtnDark"><i class="fa-solid fa-moon"></i> Cabernet Dark</button>
+                  </div>
+                </div>
+
+                <div class="settings-item">
+                  <div class="settings-item-text">
+                    <strong>Audio Feedback</strong>
+                    <p>Play pleasant synth tones on task completion and actions</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="soundSettingCheckbox" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+
+                <div class="settings-item">
+                  <div class="settings-item-text">
+                    <strong>Celebration Confetti</strong>
+                    <p>Display celebratory confetti shower when completing tasks</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="confettiSettingCheckbox" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Data Management & Backup -->
+            <div class="card settings-card col-span-2">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-database"></i> Data Backup & Reset</h3>
+                <p class="card-subtitle">All your tasks are saved safely in your browser LocalStorage.</p>
+              </div>
+              <div class="data-actions-grid">
+                <div class="data-action-box">
+                  <div class="data-action-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                  <div class="data-action-body">
+                    <h4>Load Sample Student Tasks</h4>
+                    <p>Populates the app with realistic student coursework, exams, lab assignments, and deadlines.</p>
+                    <button class="btn btn-outline" id="seedDemoDataBtn">Load Sample Data</button>
+                  </div>
+                </div>
+
+                <div class="data-action-box">
+                  <div class="data-action-icon"><i class="fa-solid fa-file-export"></i></div>
+                  <div class="data-action-body">
+                    <h4>Export Backup (JSON)</h4>
+                    <p>Download a complete JSON file containing all your tasks and notes to keep a safe backup.</p>
+                    <button class="btn btn-outline" id="exportDataBtn">Export Tasks JSON</button>
+                  </div>
+                </div>
+
+                <div class="data-action-box">
+                  <div class="data-action-icon"><i class="fa-solid fa-file-import"></i></div>
+                  <div class="data-action-body">
+                    <h4>Import Backup (JSON)</h4>
+                    <p>Restore tasks from a previously saved JSON file.</p>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                    <button class="btn btn-outline" id="importDataBtn">Upload Backup File</button>
+                  </div>
+                </div>
+
+                <div class="data-action-box danger-box">
+                  <div class="data-action-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                  <div class="data-action-body">
+                    <h4>Reset All Application Data</h4>
+                    <p>Wipe all tasks and reset progress back to clean state. Cannot be undone.</p>
+                    <button class="btn btn-danger" id="resetAllDataBtn">Reset All Data</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MODALS
+       ============================================== -->
+
+  <!-- Add / Edit Task Modal -->
+  <div class="modal-backdrop" id="taskModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon" id="taskModalIcon">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <div>
+            <h3 class="modal-title" id="taskModalTitle">Add New Task</h3>
+            <p class="modal-subtitle">Organize your academic milestones and daily study goals</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="taskModalCloseBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="taskForm" class="modal-body">
+        <input type="hidden" id="taskIdInput">
+
+        <!-- Task Title -->
+        <div class="form-group">
+          <label for="taskTitleInput" class="form-label required">Task Title</label>
+          <input type="text" id="taskTitleInput" class="form-control" placeholder="e.g., CS301 Database Assignment 3, Calculus Midterm Prep" required maxlength="120">
+          <div class="form-hint">Be specific with course codes or deliverables.</div>
+        </div>
+
+        <!-- Category & Priority Row -->
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label for="taskCategoryInput" class="form-label required">Category</label>
+            <select id="taskCategoryInput" class="form-select" required>
+              <option value="Assignment">📝 Assignment</option>
+              <option value="Study">📚 Study / Revision</option>
+              <option value="Project">🚀 Course Project</option>
+              <option value="Personal">👤 Personal & Extracurricular</option>
+              <option value="Other">📌 Other</option>
+            </select>
+          </div>
+
+          <div class="form-group col-6">
+            <label class="form-label required">Priority Level</label>
+            <div class="priority-radio-group">
+              <label class="priority-label priority-low">
+                <input type="radio" name="taskPriority" value="Low">
+                <span class="priority-pill">Low</span>
+              </label>
+              <label class="priority-label priority-medium">
+                <input type="radio" name="taskPriority" value="Medium" checked>
+                <span class="priority-pill">Medium</span>
+              </label>
+              <label class="priority-label priority-high">
+                <input type="radio" name="taskPriority" value="High">
+                <span class="priority-pill">High</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Due Date and Time Row -->
+        <div class="form-row">
+          <div class="form-group col-7">
+            <label for="taskDueDateInput" class="form-label required">Due Date</label>
+            <input type="date" id="taskDueDateInput" class="form-control" required>
+          </div>
+          <div class="form-group col-5">
+            <label for="taskDueTimeInput" class="form-label">Due Time</label>
+            <input type="time" id="taskDueTimeInput" class="form-control" value="23:59">
+          </div>
+        </div>
+
+        <!-- Quick Date Shortcut Pills -->
+        <div class="date-shortcuts">
+          <span class="shortcut-label">Quick Set:</span>
+          <button type="button" class="btn-chip" id="chipToday">Today</button>
+          <button type="button" class="btn-chip" id="chipTomorrow">Tomorrow</button>
+          <button type="button" class="btn-chip" id="chipWeekend">This Weekend</button>
+          <button type="button" class="btn-chip" id="chipNextWeek">Next Monday</button>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="taskDescInput" class="form-label">Description & Submission Notes</label>
+          <textarea id="taskDescInput" class="form-control textarea" rows="3" placeholder="Add rubrics, submission portal links, textbook chapters or notes..."></textarea>
+        </div>
+
+        <!-- Subtasks / Checklist builder -->
+        <div class="form-group">
+          <label class="form-label">
+            <span>Checklist & Milestones (Optional)</span>
+            <span class="badge badge-neutral" id="subtaskCounter">0 subtasks</span>
+          </label>
+          <div class="subtask-input-row">
+            <input type="text" id="newSubtaskInput" class="form-control" placeholder="Add step (e.g. Read paper, Write code, Test cases)...">
+            <button type="button" class="btn btn-outline" id="addSubtaskBtn">
+              <i class="fa-solid fa-plus"></i> Add
+            </button>
+          </div>
+          <ul class="subtask-list" id="subtasksList">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="taskModalCancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="taskModalSubmitBtn">
+            <i class="fa-solid fa-check"></i>
+            <span id="taskSubmitBtnText">Save Task</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Details Modal (Quick View) -->
+  <div class="modal-backdrop" id="taskDetailModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon" id="detailIcon">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div>
+            <span class="category-pill mb-1" id="detailCategoryBadge">Assignment</span>
+            <h3 class="modal-title text-wrap" id="detailTitle">Task Details</h3>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="taskDetailCloseBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body detail-modal-body">
+        <div class="detail-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Status</span>
+            <span id="detailStatusBadge" class="badge">Pending</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Priority</span>
+            <span id="detailPriorityBadge" class="badge">Medium</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Deadline</span>
+            <span id="detailDeadlineText" class="font-bold">Oct 12, 2026, 11:59 PM</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Countdown</span>
+            <span id="detailCountdownBadge" class="badge badge-warning">Due in 3 days</span>
+          </div>
+        </div>
+
+        <div class="detail-section" id="detailDescSection">
+          <h4 class="detail-section-title">Description & Notes</h4>
+          <p class="detail-desc-text" id="detailDescText">No description provided.</p>
+        </div>
+
+        <div class="detail-section" id="detailSubtasksSection">
+          <h4 class="detail-section-title">
+            <span>Milestone Checklist</span>
+            <span class="detail-subtask-progress" id="detailSubtaskProgressText">0/0 completed</span>
+          </h4>
+          <div class="detail-subtasks-list" id="detailSubtasksList"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer detail-modal-footer">
+        <button type="button" class="btn btn-outline" id="detailToggleCompleteBtn">
+          <i class="fa-solid fa-check"></i>
+          <span id="detailCompleteBtnText">Mark as Completed</span>
+        </button>
+        <button type="button" class="btn btn-outline" id="detailStartTimerBtn">
+          <i class="fa-solid fa-stopwatch"></i> Focus Timer
+        </button>
+        <button type="button" class="btn btn-outline" id="detailEditBtn">
+          <i class="fa-solid fa-pen-to-square"></i> Edit
+        </button>
+        <button type="button" class="btn btn-outline-danger" id="detailDeleteBtn">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" id="deleteConfirmModal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon text-danger">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <h3 class="modal-title">Delete Task</h3>
+            <p class="modal-subtitle">Are you sure you want to remove this task?</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="deleteModalCloseBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-secondary" id="deleteTargetTaskTitle">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+          <i class="fa-solid fa-trash-can"></i> Delete Permanently
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Floating Action Button for Mobile -->
+  <button class="fab-btn" id="fabAddBtn" title="Create New Task" aria-label="Create New Task">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <script src="app.js"></script>
+</body>
+</html>
